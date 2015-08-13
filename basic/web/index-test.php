@@ -13,4 +13,6 @@ require(__DIR__ . '/../vendor/yiisoft/yii2/Yii.php');
 
 $config = require(__DIR__ . '/../tests/codeception/config/acceptance.php');
 
+echo "our crm";
+
 (new yii\web\Application($config))->run();
