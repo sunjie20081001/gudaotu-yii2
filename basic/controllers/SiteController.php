@@ -73,6 +73,8 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
+    
+    
 
     public function actionContact()
     {
@@ -90,5 +92,17 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+    
+    /**
+    * 注册控制器
+    */
+    public function actionRegister()
+    {
+        if (!\Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+        
+        return $this->render('register');
     }
 }

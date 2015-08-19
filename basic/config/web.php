@@ -5,6 +5,8 @@ $params = require(__DIR__ . '/params.php');
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
+    'extensions' => require(__DIR__ . '/../vendor/yiisoft/extensions.php'),
+    'defaultRoute' => 'site',
     'bootstrap' => ['log'],
     'components' => [
         'request' => [
@@ -38,8 +40,18 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName'  => false,
+        ],
     ],
     'params' => $params,
+    'modules' => [
+        'gii' => [
+            'class' => 'yii\gii\module',
+            'allowedIPs' => ['*'],
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {
