@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%user}}".
@@ -19,7 +20,8 @@ use Yii;
  * @property integer $role
  * @property integer $notification_count
  * @property string $auth_key
- 
+ * @property string description
+ *
  *
  * @property Comment[] $comments
  * @property Post[] $posts
@@ -32,6 +34,14 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 	const STATUS_DELETED = 0; //未激活
 	const STATUS_ACTIVE = 1;  //激活
     
+    //角色
+    const ROLE_USER = 10; //一般用户
+    const ROLE_AUTHOR = 20; //作者/编辑
+    const ROLE_ADMIN  = 30; //管理员 
+    const ROLE_SUPER  = 40; //超级管理员
+    
+
+    
     /**
      * @inheritdoc
      */
@@ -39,7 +49,16 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     {
         return '{{%user}}';
     }
-
+    
+    public static function roleArray()
+    {
+        return [
+            10 => '一般用户',
+            20 => '编辑',
+            30 => '管理员',
+            40 => '超级管理员'
+        ];
+    }
     /**
      * @inheritdoc
      */
@@ -48,11 +67,14 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
         return [
             [['username', 'password_hash'], 'required'],
             [['created_at', 'updated_at', 'status', 'role', 'notification_count'], 'integer'],
-            [['username', 'passwor_hash', 'email', 'display_name', 'auth_key'], 'string', 'max' => 255],
+            [['username', 'password_hash', 'email', 'display_name', 'auth_key', 'description'], 'string', 'max' => 255],
             [['avatar'], 'string', 'max' => 45],
             [['username'], 'unique'],
-            ['status', 'defautl', 'value' => self::STATUS_ACTIVE],
-            ['status', 'in', 'range' => [self::STATUS_DELETED, sefl::STATUS_ACTIVE]],
+            ['status', 'default', 'value' => self::STATUS_ACTIVE],
+            ['status', 'in', 'range' => [self::STATUS_DELETED, self::STATUS_ACTIVE]],
+            ['role', 'default', 'value' => self::ROLE_USER],
+            ['role', 'in', 'range' => array_keys(static::roleArray())],
+
         ];
     }
 
@@ -68,11 +90,12 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
             'username' => '用户名',
             'password_hash' => '密码',
             'email' => '邮箱',
-            'display_name' => '显示名',
+            'display_name' => '昵称',
             'avatar' => '头像',
             'status' => '状态',
             'role' => '角色',
             'notification_count' => '通知',
+            'description' => '一句话描述',
         ];
     }
 
@@ -113,7 +136,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     }
     
     public static function findByUsername($username){
-        
+        return static::findOne(['username' => $username]);
     }
     
     public function getId(){
@@ -151,5 +174,49 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
     public function validatePassword($password)
     {
         return \Yii::$app->security->validatePassword($password, $this->password_hash);
+    }
+    
+    
+    /**
+    * 是否是 编辑
+    * @return boolean
+    */
+    public function isAuthor(){
+        if($this->role == self::ROLE_AUTHOR || $this->role == self::ROLE_ADMIN || $this->role == self::ROLE_SUPER ){
+            return true;
+        }
+        return false;
+    }
+    
+    public function isAdmin(){
+        if($this->role == self::ROLE_ADMIN || $this->role == self::ROLE_SUPER ){
+            return true;
+        }
+        return false;
+    }
+    
+    public function isSuperAdmin(){
+        if($this->role == self::ROLE_SUPER ){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 返回作者数组 id=>display_name
+     * @return array
+     */
+    public static function getAuthors()
+    {
+        return ArrayHelper::map(static::find()->where(['role' => self::ROLE_AUTHOR,'status' => self::STATUS_ACTIVE])->all(),'id','label');
+    }
+
+    /**
+     * 用户标签/display_name or username
+     * @return string
+     */
+    public function getLabel()
+    {
+        return $this->display_name?$this->display_name:$this->username;
     }
 }

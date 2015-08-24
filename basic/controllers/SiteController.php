@@ -2,12 +2,16 @@
 
 namespace app\controllers;
 
+use app\models\CommentSearch;
+use app\models\PostSearch;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use app\models\Post;
+use app\models\Term;
 
 class SiteController extends Controller
 {
@@ -47,9 +51,52 @@ class SiteController extends Controller
         ];
     }
 
+    /**
+     * 网站首页
+     * 无限加载
+     * @return string
+     */
     public function actionIndex()
     {
-        return $this->render('index');
+        //翻页 分类  标签(暂时不做标签)
+        $params = \Yii::$app->request->queryParams;
+
+        //分类
+        $condition = array();
+        if ( isset( $params['term'] ) ) {
+            $term = Term::findOne(['slug' => $params['term']]);
+            $term ? $params['PostSearch']['term_id'] = $term->id : '';
+        }
+
+        $postSearch = new PostSearch();
+        $dataProvider = $postSearch->search($params, $condition);
+
+
+        return $this->render('index',[
+            'postSearch' => $postSearch,
+            'dataProvider' => $dataProvider,
+        ]);
+    }
+
+    /**
+     * 文章页面
+     * @param $slug
+     * @return string
+     */
+    public function actionView($slug)
+    {
+        $model = Post::getPostBySlug($slug);
+
+
+        $commentSearch = new CommentSearch();
+        if(!$model){
+
+        }
+        $dataProvider = $commentSearch->search(['post_id' => $model->id]);
+        return $this->render('view',[
+            'model' => $model,
+            'dataProvider' => $dataProvider
+        ]);
     }
 
     public function actionLogin()
@@ -103,6 +150,18 @@ class SiteController extends Controller
             return $this->goHome();
         }
         
-        return $this->render('register');
+        $model = new \app\models\RegisterForm();
+
+        if($model->load(\Yii::$app->request->post()) ){
+            if ( $user = $model->save() ){
+                if ( \Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
+            
+        }
+        return $this->render('register',[
+            'model' => $model
+        ]);
     }
 }

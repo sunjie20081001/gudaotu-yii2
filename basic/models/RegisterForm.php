@@ -10,9 +10,9 @@ class RegisterForm extends Model
 	public $username;
 	public $password;
 	public $email;
-	public $re_password;
+
 	
-	private $_user = null;
+
 	
 	/**
 	* 
@@ -23,7 +23,6 @@ class RegisterForm extends Model
 		return [
 			'username'    => '用户名',
 			'password'    => '密码',
-			're_password' => '确认密码',
 			'email'       => '电子邮件',
 			];
 	}
@@ -40,14 +39,22 @@ class RegisterForm extends Model
 			['email', 'filter', 'filter' => 'trim'],
 			['email', 'required'],
 			['email', 'email'],
-			['email', 'unique', 'targetClass' => '\common\models\User', 'message' => '{attribute}已经被使用'],
+			['email', 'unique', 'targetClass' => '\app\models\User', 'message' => '{attribute}已经被使用'],
 			
 			['password','required'],
 			['password', 'string', 'min' => 6, 'message' => '密码最短6'],
-			
-			['re_password','required'],
-			['re_password','string', 'min' => 6],
-			['re_password','match']
 		];
+	}
+	
+	public function save(){
+		if($this->validate()){
+            $user = new User();
+            $user->username = $this->username;
+            $user->email = $this->email;
+            $user->setPassword($this->password);
+            $user->save();
+			return $user;
+		}
+		return null;
 	}
 }

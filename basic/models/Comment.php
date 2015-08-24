@@ -16,8 +16,12 @@ use Yii;
  * @property string $parent_id
  * @property string $agent
  * @property string $status
+ * @property string $post_id
+ *
+ * @property User $user
+ * @property Post $post
  */
-class Comment extends \yii\db\ActiveRecord
+class Comment extends \app\models\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -33,8 +37,8 @@ class Comment extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['created_at', 'updated_at'], 'required'],
-            [['created_at', 'updated_at', 'user_id', 'parent_id'], 'integer'],
+            [['user_id'], 'required'],
+            [['created_at', 'updated_at', 'user_id', 'parent_id', 'post_id'], 'integer'],
             [['content'], 'string'],
             [['ip', 'agent'], 'string', 'max' => 255],
             [['status'], 'string', 'max' => 45]
@@ -50,12 +54,29 @@ class Comment extends \yii\db\ActiveRecord
             'id' => 'ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
-            'content' => 'Content',
-            'user_id' => 'User ID',
+            'content' => '评论内容',
+            'user_id' => '评论者',
             'ip' => 'Ip',
-            'parent_id' => 'Parent ID',
+            'parent_id' => '父评论',
             'agent' => 'Agent',
             'status' => 'Status',
+            'post_id' => '文章',
         ];
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUser()
+    {
+        return $this->hasOne(User::className(), ['id' => 'user_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getPost()
+    {
+        return $this->hasOne(Post::className(), ['id' => 'post_id']);
     }
 }

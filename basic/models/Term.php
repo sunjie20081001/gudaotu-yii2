@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "{{%term}}".
@@ -12,10 +13,12 @@ use Yii;
  * @property integer $updated_at
  * @property string $title
  * @property string $slug
+ * @property string $description
+ * @property string $keyword
  *
  * @property Post[] $posts
  */
-class Term extends \yii\db\ActiveRecord
+class Term extends \app\models\ActiveRecord
 {
     /**
      * @inheritdoc
@@ -32,7 +35,7 @@ class Term extends \yii\db\ActiveRecord
     {
         return [
             [['created_at', 'updated_at'], 'integer'],
-            [['title'], 'string'],
+            [['title','keyword', 'description'], 'string'],
             [['slug'], 'required'],
             [['slug'], 'string', 'max' => 255],
             [['slug'], 'unique']
@@ -48,8 +51,10 @@ class Term extends \yii\db\ActiveRecord
             'id' => 'ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
-            'title' => 'Title',
-            'slug' => 'Slug',
+            'title' => '标题',
+            'slug' => '标签',
+            'keyword'=> '关键字',
+            'description' => '描述',
         ];
     }
 
@@ -59,5 +64,11 @@ class Term extends \yii\db\ActiveRecord
     public function getPosts()
     {
         return $this->hasMany(Post::className(), ['term_id' => 'id']);
+    }
+    
+    
+    public static function allTermsArray()
+    {
+        return ArrayHelper::map(static::find()->all(),'id','title');
     }
 }
