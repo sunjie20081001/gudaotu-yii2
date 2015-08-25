@@ -2,6 +2,17 @@ body{
     font-family: Helvetica, Tahoma, Arial, STXihei, "华文细黑", Heiti, "黑体", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", sans-serif;
     background: white;
 }
+h1 {
+    font-size: 2em;
+    margin: 0.2em 0;
+}
+a{
+    color: #ee4723;
+    text-decoration: none;
+}
+a:hover{
+    text-decoration: underline;
+}
 .clearfix {
     *zoom: 1;
 }
@@ -61,4 +72,49 @@ ul li{
 }
 .head .header .menu ul li.active a i, .head .header .menu ul li:hover a i{
     color:black;
+}
+
+/**
+* 内容区域
+*/
+.wrap{}
+
+/**
+* 面包屑
+*/
+.breadcrumb{    width: 100%;
+    float: left;}
+.breadcrumb li{
+    float: left;
+    padding: 0 3px;
+}
+.breadcrumb li.active{}
+.breadcrumb li a{}
+.breadcrumb li span{
+    margin-left: 3px;
+    font-size:12px;
+}
+
+/**
+*创建文章
+*/
+.post{
+    float:left;
+    width: 100%;
+}
+.post-form{
+    background-color: #F5F5F5;
+    width: 100%;
+    margin: 0 auto;
+    /* padding: 0 5%; */
+    border-top: 2px solid #ebebeb;
+}
+.post-form input{}
+.post-form .form-group{}
+.post-form .form-group .help-block{}
+.post-form .form-group select{}
+.post-form .form-group label{}
+.post-form .form-group textarea{}
+.post-form .form-group button{
+
 }

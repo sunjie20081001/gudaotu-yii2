@@ -8,8 +8,11 @@
 use yii\helpers\Html;
 /* @var $this yii\web\View */
 
-print_r($model);
 ?>
 
-<?= Html::a(Html::encode($model->title),['site/view','slug' => $model->slug])?>
+<div class="item">
+    <?= html::a( Html::img(Html::encode($model->img) ),['site/view', 'slug' => $model->slug], ['class' => 'item-img'] );?>
+    <?= Html::a('<h3>'.Html::encode($model->title).'</h3>',['site/view','slug' => $model->slug])?>
+</div>
+
 

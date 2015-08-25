@@ -75,7 +75,7 @@ class Post extends ActiveRecord
         return [
             [[ 'user_id', 'term_id', 'title', 'content', 'excerpt'], 'required'],
             [['created_at', 'updated_at', 'user_id', 'term_id', 'status', 'comment_status', 'view_count', 'good'], 'integer'],
-            [['title', 'content', 'excerpt'], 'string'],
+            [['title', 'content', 'excerpt','img'], 'string'],
             [['keyword'], 'string', 'max' => 45],
             [['comment_count'], 'string', 'max' => 255],
             ['status','default', 'value' => self::STATUS_DRAFT],
@@ -108,7 +108,9 @@ class Post extends ActiveRecord
             'comment_count' => '评论数',
             'view_count' => '查看数',
             'good' => '赞',
-            'slug' => '标签'
+            'slug' => '标签',
+            'img'  => '特殊图片'
+
         ];
     }
 

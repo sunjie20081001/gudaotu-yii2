@@ -4,14 +4,14 @@
 
 use yii\widgets\ListView;
 
-$this->title = '网站名';
+$this->title = '首页';
 
 
 ?>
-<div class="site-index">
+<div class="site-index row">
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'itemOptions' => [],
+        'itemOptions' => ['class' => 'col'],
         'summary' => false,
         'itemView' => '_item',
         'layout' => '{items}{pager}',

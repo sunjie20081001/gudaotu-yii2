@@ -16,11 +16,15 @@ use app\models\Post;
 
     <?php $form = ActiveForm::begin(); ?>
 
+
+
+    <?= $form->field($model, 'title')->textInput() ?>
+
     <?= $form->field($model, 'user_id')->dropDownList(User::getAuthors()) ?>
 
     <?= $form->field($model, 'term_id')->dropDownList(Term::allTermsArray()); ?>
 
-    <?= $form->field($model, 'title')->textarea(['rows' => 6]) ?>
+    <?= $form->field($model, 'excerpt')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'slug')->textInput();?>
 
@@ -28,11 +32,14 @@ use app\models\Post;
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'excerpt')->textarea(['rows' => 6]) ?>
+
 
     <?= $form->field($model, 'status')->dropDownList(Post::statusLabels()) ?>
 
     <?= $form->field($model, 'comment_status')->dropDownList(Post::commentStatusLabels()) ?>
+
+    <?= $form->field($model, 'img')?>
+
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

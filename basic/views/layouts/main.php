@@ -24,10 +24,11 @@ AppAsset::register($this);
 <body>
 <?php $this->beginBody() ?>
     <?= \app\widgets\Menu::widget()?>
-<div class="wrap">
+<div class="wrap clearfix">
     <div class="container">
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
+            'itemTemplate' => '<li>{link}<span>>></span></li>',
         ]) ?>
         <?= $content ?>
     </div>
