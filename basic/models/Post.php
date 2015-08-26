@@ -84,7 +84,7 @@ class Post extends ActiveRecord
             ['comment_status', 'in', 'range' => array_keys(static::commentStatusLabels())],
             ['slug', 'match', 'pattern' => '/^[a-z][\w-]*$/i', 'message' =>"必须为字符数字或者下划线"],
             ['slug', 'required'],
-
+            ['slug','unique','message'=>'该标签重复'],
         ];
     }
 

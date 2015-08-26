@@ -5,9 +5,13 @@ namespace app\controllers;
 use Yii;
 use app\models\Post;
 use app\models\PostSearch;
+use yii\web\Response;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
+use yii\web\UploadedFile;
+
 
 /**
  * PostController implements the CRUD actions for Post model.
@@ -21,6 +25,12 @@ class PostController extends Controller
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    ['allow' => true, 'actions' => ['index', 'create', 'update', 'delete', 'upload'], 'roles' => ['@']]
                 ],
             ],
         ];
@@ -61,15 +71,29 @@ class PostController extends Controller
     public function actionCreate()
     {
         $model = new Post();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            $model->comment_status = Post::COMMENT_STATUS_OK;
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        $currentUser = \Yii::$app->user->identity;
+        if ( !$currentUser->isAuthor() ) {
+            //不是 作者 无权操作
+            return $this->goHome();
         }
+
+        if ($model->load(Yii::$app->request->post())) {
+
+            if ( isset($model->user_id) || ($currentUser->id != $model->user_id && !$currentUser->isAdmin()) ){
+                $model->user_id = $currentUser->id;
+            }
+            if ( $model->save() ) {
+                return $this->redirect(['update', 'id' => $model->id]);
+            }
+        }
+
+        $model->comment_status = Post::COMMENT_STATUS_OK;
+        $model->user_id = $currentUser->id;
+        return $this->render('create', [
+            'model' => $model,
+            'isAdmin' => $currentUser ->isAdmin(),
+        ]);
+
     }
 
     /**
@@ -81,12 +105,28 @@ class PostController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $currentUser = \Yii::$app->user->identity;
+        if ( !$currentUser->isAuthor() ) {
+            return $this->goHome();
+        }
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if( !$currentUser->isAdmin() && $model->user_id != $currentUser->id){
+            //不是 管理员 不能 进行 操作 其它人的文章
+            return $this->goHome();
+        }
+
+        if ($model->load(Yii::$app->request->post()) ) {
+            if( !$currentUser->isAdmin() && $model->user_id != $currentUser->id ){
+                //无权修改 用户
+                return;
+            }
+            if( $model->save() ){
+                return $this->redirect(['update', 'id' => $model->id]);
+            }
         } else {
             return $this->render('update', [
                 'model' => $model,
+                'isAdmin' => $currentUser->isAdmin(),
             ]);
         }
     }
@@ -118,5 +158,35 @@ class PostController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionUpload()
+    {
+        $response = \Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+
+
+
+        $currentUser = \Yii::$app->user->identity;
+        if( !$currentUser->isAuthor() ){
+            return [
+                'status' => 1,
+                'msg' => '您没权限上传图片!',
+                'data' => '',
+            ];
+        }
+
+        if ( Yii::$app->request->isPost)
+        {
+            $model = new UploadImage();
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            if ($filePath = $model->upload())
+            {
+                //上传成功,上传到 又拍云上.
+                
+            }
+        }
+
+
     }
 }

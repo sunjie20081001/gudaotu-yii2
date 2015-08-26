@@ -1,6 +1,6 @@
 body{
     font-family: Helvetica, Tahoma, Arial, STXihei, "华文细黑", Heiti, "黑体", "Microsoft YaHei", "微软雅黑", SimSun, "宋体", sans-serif;
-    background: white;
+    background: #eeeeee;
 }
 h1 {
     font-size: 2em;
@@ -41,6 +41,7 @@ ul li{
     border-color: #e4e4e4;
     box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.175);
     width: 100%;
+    background: white;
 }
 .head .header, .container{    width: 1024px;
     margin: 0 auto;}
@@ -95,6 +96,15 @@ ul li{
     font-size:12px;
 }
 
+button{
+    font-size: 24px;
+    padding: 5px 25px;
+    line-height: 30px;
+    display: inline-block;
+    background-color: #ffc81f;
+    color: #ffffff;
+    border: none;
+}
 /**
 *创建文章
 */
@@ -103,18 +113,77 @@ ul li{
     width: 100%;
 }
 .post-form{
-    background-color: #F5F5F5;
+    background-color: white;
     width: 100%;
     margin: 0 auto;
     /* padding: 0 5%; */
     border-top: 2px solid #ebebeb;
 }
+.form-container{
+    padding: 1em;
+}
 .post-form input{}
-.post-form .form-group{}
-.post-form .form-group .help-block{}
-.post-form .form-group select{}
-.post-form .form-group label{}
+.post-form .form-group{
+    min-height: 30px;
+    float: left;
+    width: 100%;
+    margin: 0.25em;
+    line-height: 30px;
+}
+.post-form .form-group .help-block{
+    float: left;
+    color: red;
+    width: 15%;
+    margin-left: 1%;
+}
+.post-form .form-group select.form-control{
+    width: 20%;
+    height: 30px;
+}
+.post-form .form-group .control-label{
+    float: left;
+    width: 10%;
+    text-align: right;
+    margin-right: 2.5%;
+}
+.post-form .form-group .form-control{
+    float:left;
+    width:70%;
+
+}
+.post-form .form-group input.form-control{
+    height: 30px;
+    border: 1px solid #FEDD7A;
+}
 .post-form .form-group textarea{}
 .post-form .form-group button{
 
 }
+
+
+/**
+* footer
+*/
+.footer{
+    background-color: white;
+    margin: 20px 0 0;
+    padding: 10px 0;
+}
+.footer .footer-us{}
+.footer .footer-us ul{
+    float: left;
+    width: 100%;
+}
+.footer .footer-us ul li{
+    float: left;
+    padding-right: 24px;
+}
+.footer .footer-us ul li a{
+    color:black;
+}
+.footer .footer-us ul li a:hover{
+    color:#ee4723;
+}
+.footer-copyright{    font-size: 14px;
+    float: left;
+    margin: 4px 0;}

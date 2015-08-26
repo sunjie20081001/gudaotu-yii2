@@ -12,39 +12,36 @@ use app\models\Post;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="post-form">
+<div class="post-form clearfix">
+    <div class="form-container">
 
-    <?php $form = ActiveForm::begin(); ?>
+        <?php $form = ActiveForm::begin(); ?>
 
+        <?= $form->field($model, 'title')->textInput() ?>
 
+        <?= $isAdmin?$form->field($model, 'user_id')->dropDownList(User::getAuthors()) : '' ?>
 
-    <?= $form->field($model, 'title')->textInput() ?>
+        <?= $form->field($model, 'term_id')->dropDownList(Term::allTermsArray()); ?>
 
-    <?= $form->field($model, 'user_id')->dropDownList(User::getAuthors()) ?>
+        <?= $form->field($model, 'excerpt')->textarea(['rows' => 2]) ?>
 
-    <?= $form->field($model, 'term_id')->dropDownList(Term::allTermsArray()); ?>
+        <?= $form->field($model, 'slug')->textInput();?>
 
-    <?= $form->field($model, 'excerpt')->textarea(['rows' => 6]) ?>
+        <?= $form->field($model, 'keyword')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'slug')->textInput();?>
+        <?= $form->field($model, 'content')->textarea(['rows' => 3]) ?>
 
-    <?= $form->field($model, 'keyword')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'status')->dropDownList(Post::statusLabels()) ?>
 
-    <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
+        <?= $form->field($model, 'comment_status')->dropDownList(Post::commentStatusLabels()) ?>
 
-
-
-    <?= $form->field($model, 'status')->dropDownList(Post::statusLabels()) ?>
-
-    <?= $form->field($model, 'comment_status')->dropDownList(Post::commentStatusLabels()) ?>
-
-    <?= $form->field($model, 'img')?>
+        <?= $form->field($model, 'img')?>
 
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <div class="form-group">
+            <?= Html::submitButton($model->isNewRecord ? '发布' : '更新', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        </div>
+
+        <?php ActiveForm::end(); ?>
     </div>
-
-    <?php ActiveForm::end(); ?>
-
 </div>

@@ -52,6 +52,7 @@ $config = [
             'allowedIPs' => ['*'],
         ],
     ],
+    'language' => 'zh-CN',
 ];
 
 if (YII_ENV_DEV) {

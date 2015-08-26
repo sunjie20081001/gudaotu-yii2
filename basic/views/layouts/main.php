@@ -34,10 +34,16 @@ AppAsset::register($this);
     </div>
 </div>
 
-<footer class="footer">
+<footer class="footer clearfix">
     <div class="container">
-        <p class="pull-left">&copy; <a href="">鼓捣兔</a><?= date('Y') ?></p>
-        <p class="pull-right"></p>
+        <div class="footer-us">
+            <ul>
+                <li><a href="">关于我们</a></li>
+                <li><a href="">加入我们</a></li>
+                <li><a href="">投稿我们</a></li>
+            </ul>
+        </div>
+        <p class="footer-copyright">&copy; <a href="">鼓捣兔</a><?= date('Y') ?></p>
     </div>
 </footer>
 

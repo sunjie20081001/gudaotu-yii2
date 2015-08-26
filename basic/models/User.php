@@ -208,7 +208,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
      */
     public static function getAuthors()
     {
-        return ArrayHelper::map(static::find()->where(['role' => self::ROLE_AUTHOR,'status' => self::STATUS_ACTIVE])->all(),'id','label');
+        return ArrayHelper::map(static::find()->where(['role' => [self::ROLE_AUTHOR,self::ROLE_ADMIN, self::ROLE_SUPER],'status' => self::STATUS_ACTIVE])->all(),'id','label');
     }
 
     /**
