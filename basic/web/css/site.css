@@ -97,11 +97,11 @@ ul li{
 }
 
 button{
-    font-size: 24px;
+    font-size: 18px;
     padding: 5px 25px;
     line-height: 30px;
     display: inline-block;
-    background-color: #ffc81f;
+    background-color: #EE4723;
     color: #ffffff;
     border: none;
 }
@@ -157,17 +157,52 @@ button{
 }
 .post-form .form-group textarea{}
 .post-form .form-group button{
-
+float:right;
+    margin-right:172px;
 }
 
 
+
+/**
+    账户设置
+**/
+.account-avatar{
+    text-align: center;
+    margin: 23px;
+}
+.account-avatar-img{}
+.account-a-img{
+    border-radius: 108px;
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+}
+
+.account-tabs{}
+.account-tabs ul{}
+.account-tabs ul li{}
+.account-tabs ul li.active{}
+
+.account-content{}
+.account-comments{
+
+}
+.comment-item{}
+
+.comment-item h3{}
+.comment-item .comment-date{}
+.comment-item .comment-content{}
 /**
 * footer
 */
 .footer{
+    position: absolute;
     background-color: white;
     margin: 20px 0 0;
     padding: 10px 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
 }
 .footer .footer-us{}
 .footer .footer-us ul{

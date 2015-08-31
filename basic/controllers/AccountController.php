@@ -109,6 +109,4 @@ class AccountController extends Controller
         $dataProvider = $postSearch->search($params);
     }
 
-    public function actionPost()
-    {}
 }

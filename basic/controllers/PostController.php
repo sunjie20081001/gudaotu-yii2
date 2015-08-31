@@ -5,8 +5,9 @@ namespace app\controllers;
 use Yii;
 use app\models\Post;
 use app\models\PostSearch;
+use app\models\UploadImage;
+
 use yii\web\Response;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -18,6 +19,9 @@ use yii\web\UploadedFile;
  */
 class PostController extends Controller
 {
+
+    public $enableCsrfValidation = false;
+
     public function behaviors()
     {
         return [
@@ -72,27 +76,37 @@ class PostController extends Controller
     {
         $model = new Post();
         $currentUser = \Yii::$app->user->identity;
-        if ( !$currentUser->isAuthor() ) {
+        if (!$currentUser->isAuthor()) {
             //不是 作者 无权操作
             return $this->goHome();
         }
 
         if ($model->load(Yii::$app->request->post())) {
-
-            if ( isset($model->user_id) || ($currentUser->id != $model->user_id && !$currentUser->isAdmin()) ){
+            if (isset($model->user_id) || ($currentUser->id != $model->user_id && !$currentUser->isAdmin())) {
                 $model->user_id = $currentUser->id;
             }
-            if ( $model->save() ) {
+            $model->user_id = $currentUser->id;
+
+            //处理slug
+            $title = mb_strlen($model->title, 'utf8') > 6 ? mb_substr($model->title, 0, 5) : $model->title;
+            $model->slug = \app\helpers\Pinyin::encode($title, 'all');
+            while (Post::getPostBySlug($model->slug)) {
+                $model->slug .= '-1';
+            }
+            if ($model->save()) {
+                $this->flash('发布成功!','info');
                 return $this->redirect(['update', 'id' => $model->id]);
             }
         }
 
         $model->comment_status = Post::COMMENT_STATUS_OK;
         $model->user_id = $currentUser->id;
+
         return $this->render('create', [
             'model' => $model,
-            'isAdmin' => $currentUser ->isAdmin(),
+            'isAdmin' => $currentUser->isAdmin(),
         ]);
+
 
     }
 
@@ -106,21 +120,23 @@ class PostController extends Controller
     {
         $model = $this->findModel($id);
         $currentUser = \Yii::$app->user->identity;
-        if ( !$currentUser->isAuthor() ) {
+        if (!$currentUser->isAuthor()) {
             return $this->goHome();
         }
 
-        if( !$currentUser->isAdmin() && $model->user_id != $currentUser->id){
+        if (!$currentUser->isAdmin() && $model->user_id != $currentUser->id) {
             //不是 管理员 不能 进行 操作 其它人的文章
             return $this->goHome();
         }
 
-        if ($model->load(Yii::$app->request->post()) ) {
-            if( !$currentUser->isAdmin() && $model->user_id != $currentUser->id ){
+        if ($model->load(Yii::$app->request->post())) {
+            if (!$currentUser->isAdmin() && $model->user_id != $currentUser->id) {
                 //无权修改 用户
                 return;
             }
-            if( $model->save() ){
+
+            if ($model->save()) {
+                $this->flash('更新成功!','info');
                 return $this->redirect(['update', 'id' => $model->id]);
             }
         } else {
@@ -160,15 +176,17 @@ class PostController extends Controller
         }
     }
 
+    /**
+     * 文章图片上传
+     * @return array
+     */
     public function actionUpload()
     {
         $response = \Yii::$app->response;
         $response->format = Response::FORMAT_JSON;
 
-
-
         $currentUser = \Yii::$app->user->identity;
-        if( !$currentUser->isAuthor() ){
+        if (!$currentUser->isAuthor()) {
             return [
                 'status' => 1,
                 'msg' => '您没权限上传图片!',
@@ -176,17 +194,41 @@ class PostController extends Controller
             ];
         }
 
-        if ( Yii::$app->request->isPost)
-        {
+        if (Yii::$app->request->isPost) {
             $model = new UploadImage();
-            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
-            if ($filePath = $model->upload())
-            {
-                //上传成功,上传到 又拍云上.
-                
-            }
-        }
 
+            $model->imageFiles = UploadedFile::getInstances($model, 'imageFiles');
+            if ($filePaths = $model->upload()) {
+                //上传成功,上传到 又拍云上.
+                $upaiyun = new \app\componets\Upaiyun('gudaotester', 'gudaotester', '090402xia');
+                $rsps = array();
+                foreach ($filePaths as $filePath) {
+                    $fh = \fopen($filePath, 'rb');
+                    $rsp = $upaiyun->writeFile('/p/' . \basename($filePath), $fh, True);
+                    fclose($fh);
+                    $rsps[] = $upaiyun->webUrl . '/p/' . \basename($filePath);
+                    unlink($filePath);
+                }
+
+                return [
+                    'status' => 0,
+                    'msg' => '上传成功',
+                    'data' => $rsps,
+                ];
+            } else {
+                return [
+                    'status' => 1,
+                    'msg' => '文件上传失败',
+                    'data' => '',
+                ];
+            }
+        } else {
+            return [
+                'status' => 1,
+                'msg' => '请用POST方法上传',
+                'data' => '',
+            ];
+        }
 
     }
 }

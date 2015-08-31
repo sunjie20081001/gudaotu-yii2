@@ -5,7 +5,7 @@ namespace app\models;
 
 use Faker\Provider\DateTime;
 use Yii;
-use yii\web\Model;
+use yii\base\Model;
 use yii\web\UploadedFile;
 
 
@@ -13,27 +13,33 @@ class UploadImage extends Model
 {
 
     /**
-     * @var UploadedFile
+     * @var UploadedFile[]
      */
-    public $imageFile;
+    public $imageFiles;
 
     public function rules()
     {
         return [
-            [['imageFile', 'file', 'skipOnEmpty' => false, 'extensions' => 'png,jpg,gif,jpeg']],
+            [['imageFiles'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png,jpg,gif,jpeg' , 'maxFiles'=> 5],
         ];
     }
 
     public function upload()
     {
         //根据时间生成图片
-        $t = new DateTime();
-
+        $t = time();
         if($this->validate()){
-            $filepath = 'uploads/'.static::numToAlpha($t) .'.' . $this->imageFile->extension;
-            $this->imageFile->saveAs($filepath);
-            return $filepath;
+            $filepaths = array();
+            $appPath = Yii::getAlias('@app');
+            foreach($this->imageFiles as $file){
+                $t++;
+                $filepath = $appPath.'/uploads/'.static::numToAlpha($t) .'.' . $file->extension;
+                $file->saveAs($filepath);
+                $filepaths[] = $filepath;
+            }
+            return $filepaths;
         }
+
         return false;
     }
 
@@ -42,7 +48,7 @@ class UploadImage extends Model
         $str = null;
         while($number){
             $yu = $number%10;
-            $number = int($number /10);
+            $number = (int)($number /10);
             $str .= chr(70+$yu);
         }
 

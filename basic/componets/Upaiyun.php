@@ -33,6 +33,8 @@ class Upaiyun extends Object
     const X_GMKERL_UNSHARP   = 'x­gmkerl-unsharp';
     /*}}}*/
 
+    public $webUrl = '';
+
     private $_bucketname;
     private $_username;
     private $_password;
@@ -73,6 +75,8 @@ class Upaiyun extends Object
         $this->_username = $username;
         $this->_password = md5($password);
         $this->_timeout = $timeout;
+
+        $this->webUrl = 'http://'.$bucketname.'.b0.upaiyun.com';
 
         $this->endpoint = is_null($endpoint) ? self::ED_AUTO : $endpoint;
     }/*}}}*/

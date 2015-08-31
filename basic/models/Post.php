@@ -138,7 +138,8 @@ class Post extends ActiveRecord
         return $this->hasMany(UserMeta::className(), ['post_id' => 'id']);
     }
 
-    public static function getPostBySlug($slug){
+    public static function getPostBySlug($slug)
+    {
         return static::findOne(['slug' => $slug]);
     }
 }

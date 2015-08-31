@@ -13,16 +13,18 @@ use yii\web\AssetBundle;
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
  */
-class AppAsset extends AssetBundle
+class PostAsset extends AssetBundle
 {
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
         'css/normalize.css',
         'css/flaticon.css',
+        'css/post_edit.css',
         'css/site.css',
     ];
     public $js = [
+        'js/index.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
